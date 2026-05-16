@@ -1,0 +1,26 @@
+# PHP / Composer
+/vendor/
+composer.phar
+composer.lock
+
+# Environment & secrets — không push cấu hình thật
+.env
+.env.*
+!.env.example
+config/database.local.php
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs & cache
+*.log
+/storage/
+/cache/
+
+# Uploaded assets (giữ cấu trúc thư mục nếu cần)
+/public/images/uploads/*

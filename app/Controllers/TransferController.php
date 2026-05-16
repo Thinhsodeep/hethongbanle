@@ -1,0 +1,10 @@
+<?php
+
+declare(strict_types=1);
+
+require_once ROOT_PATH . '/core/Controller.php';
+
+final class TransferController extends Controller
+{
+    // Module 5 — chuyển kho đa chi nhánh
+}
