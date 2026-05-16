@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-require_once ROOT_PATH . '/core/Middleware.php';
-
-final class AuthMiddleware extends Middleware
+class AuthMiddleware
 {
-    public function handle(): bool
+    public static function handle(): void
     {
-        // Module 1 — kiểm tra session đăng nhập
-        return isset($_SESSION['user_id']);
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/auth/login');
+            exit;
+        }
     }
 }

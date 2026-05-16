@@ -9,6 +9,10 @@ composer.lock
 !.env.example
 config/database.local.php
 
+# Cursor / agent (chỉ dùng local, không push)
+.cursorrules
+AGENT_PERSON1.md
+
 # IDE / OS
 .idea/
 .vscode/

@@ -2,14 +2,20 @@
 
 declare(strict_types=1);
 
-/**
- * Thông tin kết nối PDO MySQL — KHÔNG commit mật khẩu production.
- */
-return [
+$dbConfig = [
     'host' => '127.0.0.1',
-    'port' => 3306,
-    'dbname' => 'retail_chain',
-    'charset' => 'utf8mb4',
-    'username' => 'root',
-    'password' => '',
+    'name' => 'retail_chain',
+    'user' => 'root',
+    'pass' => '0918447847',
 ];
+
+if (is_file(__DIR__ . '/database.local.php')) {
+    /** @var array{host?:string,name?:string,user?:string,pass?:string} $local */
+    $local = require __DIR__ . '/database.local.php';
+    $dbConfig = array_merge($dbConfig, $local);
+}
+
+define('DB_HOST', $dbConfig['host']);
+define('DB_NAME', $dbConfig['name']);
+define('DB_USER', $dbConfig['user']);
+define('DB_PASS', $dbConfig['pass']);

@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-/**
- * Front controller — mọi request đi qua file này.
- */
-define('ROOT_PATH', dirname(__DIR__));
+require_once dirname(__DIR__) . '/config/config.php';
+require_once APP_ROOT . '/config/database.php';
+require_once APP_ROOT . '/core/Database.php';
+require_once APP_ROOT . '/core/Controller.php';
+require_once APP_ROOT . '/core/App.php';
 
-require ROOT_PATH . '/config/config.php';
-require ROOT_PATH . '/core/App.php';
-
-(new App())->run();
+new App();

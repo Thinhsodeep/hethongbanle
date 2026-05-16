@@ -2,17 +2,24 @@
 
 declare(strict_types=1);
 
-abstract class Controller
+class Controller
 {
     protected function view(string $path, array $data = []): void
     {
         extract($data, EXTR_SKIP);
-        $file = ROOT_PATH . '/app/Views/' . $path . '.php';
-        if (!is_file($file)) {
-            http_response_code(500);
-            echo 'View not found: ' . htmlspecialchars($path);
-            return;
-        }
-        require $file;
+        require_once APP_ROOT . '/app/Views/layouts/header.php';
+        require_once APP_ROOT . '/app/Views/' . $path . '.php';
+        require_once APP_ROOT . '/app/Views/layouts/footer.php';
+    }
+
+    protected function redirect(string $path): void
+    {
+        header('Location: ' . BASE_URL . $path);
+        exit;
+    }
+
+    protected function flash(string $type, string $message): void
+    {
+        $_SESSION['flash'] = ['type' => $type, 'message' => $message];
     }
 }

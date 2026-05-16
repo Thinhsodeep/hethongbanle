@@ -2,21 +2,40 @@
 
 declare(strict_types=1);
 
-final class App
+class App
 {
-    public function run(): void
+    public function __construct()
     {
-        $uri = $_SERVER['REQUEST_URI'] ?? '/';
-        $path = parse_url((string) $uri, PHP_URL_PATH) ?: '/';
+        $url   = trim($_GET['url'] ?? 'auth/login', '/');
+        $parts = $url !== '' ? explode('/', $url) : ['auth', 'login'];
 
-        // Router tối giản — mở rộng map route/controller sau
-        if ($path === '/' || $path === '/index.php') {
-            header('Content-Type: text/html; charset=utf-8');
-            echo '<h1>Retail Chain System</h1><p>Router đã sẵn sàng — kết nối controller trong App.php.</p>';
-            return;
+        $controllerName = ucfirst($parts[0] ?? 'auth') . 'Controller';
+        $method         = $parts[1] ?? 'index';
+        $param          = $parts[2] ?? null;
+
+        $file = APP_ROOT . '/app/Controllers/' . $controllerName . '.php';
+        if (!is_file($file)) {
+            $this->notFound();
         }
 
+        require_once $file;
+
+        if (!class_exists($controllerName)) {
+            $this->notFound();
+        }
+
+        $ctrl = new $controllerName();
+        if (!method_exists($ctrl, $method)) {
+            $this->notFound();
+        }
+
+        $ctrl->$method($param);
+    }
+
+    private function notFound(): void
+    {
         http_response_code(404);
         echo '404 Not Found';
+        exit;
     }
 }

@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Sao chép thành database.local.php (đã có trong .gitignore).
+ */
+return [
+    'host' => '127.0.0.1',
+    'name' => 'retail_chain',
+    'user' => 'root',
+    'pass' => 'mat_khau_mysql_cua_ban',
+];

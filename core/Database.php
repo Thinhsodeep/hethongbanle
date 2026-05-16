@@ -2,36 +2,24 @@
 
 declare(strict_types=1);
 
-final class Database
+class Database
 {
-    private static ?PDO $pdo = null;
+    private static ?PDO $instance = null;
 
-    public static function connection(): PDO
+    public static function getInstance(): PDO
     {
-        if (self::$pdo instanceof PDO) {
-            return self::$pdo;
+        if (self::$instance instanceof PDO) {
+            return self::$instance;
         }
 
-        /** @var array{host:string,port:int,dbname:string,charset:string,username:string,password:string} $cfg */
-        $cfg = require ROOT_PATH . '/config/database.php';
-        $dsn = sprintf(
-            'mysql:host=%s;port=%d;dbname=%s;charset=%s',
-            $cfg['host'],
-            $cfg['port'],
-            $cfg['dbname'],
-            $cfg['charset']
-        );
+        $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
 
-        try {
-            self::$pdo = new PDO($dsn, $cfg['username'], $cfg['password'], [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ]);
-        } catch (PDOException $e) {
-            http_response_code(500);
-            exit('Database connection failed.');
-        }
+        self::$instance = new PDO($dsn, DB_USER, DB_PASS, [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ]);
 
-        return self::$pdo;
+        return self::$instance;
     }
 }
