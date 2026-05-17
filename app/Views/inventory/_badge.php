@@ -2,8 +2,8 @@
 function stockBadgeClass(string $status): string
 {
     return match ($status) {
-        'Hết hàng' => 'bg-danger',
-        'Sắp hết' => 'bg-warning text-dark',
-        default => 'bg-success',
+        'Hết hàng' => 'stripe-badge stripe-badge-danger',
+        'Sắp hết' => 'stripe-badge stripe-badge-warning',
+        default => 'stripe-badge stripe-badge-success',
     };
 }

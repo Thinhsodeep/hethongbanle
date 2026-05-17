@@ -12,6 +12,7 @@ config/database.local.php
 # Cursor / agent (chỉ dùng local, không push)
 .cursorrules
 AGENT_PERSON1.md
+UI_STYLE.md
 
 # IDE / OS
 .idea/
