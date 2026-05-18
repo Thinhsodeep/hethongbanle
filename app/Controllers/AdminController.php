@@ -12,8 +12,10 @@ class AdminController extends Controller
     {
         RoleMiddleware::require('admin', 'manager');
         $pageTitle = 'Dashboard';
+        require_once APP_ROOT . '/app/Models/Order.php';
         $this->view('admin/dashboard', [
             'summary' => (new Inventory())->getSummary(),
+            'revenue' => (new Order())->getRevenueLast7Days(),
         ]);
     }
 

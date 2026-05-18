@@ -11,8 +11,10 @@ class AuthController extends Controller
         if (!empty($_SESSION['user_id'])) {
             if (in_array($_SESSION['role'] ?? '', ['admin', 'manager'], true)) {
                 $this->redirect('/admin/dashboard');
-            } else {
+            } elseif (($_SESSION['role'] ?? '') === 'staff') {
                 $this->redirect('/inventory/index');
+            } else {
+                $this->redirect('/pos/index');
             }
         }
 
@@ -32,7 +34,8 @@ class AuthController extends Controller
                 } elseif ($user['role_name'] === 'staff') {
                     $this->redirect('/inventory/index');
                 } else {
-                    $this->redirect('/inventory/index');
+                    // cashier → thẳng vào màn hình bán hàng
+                    $this->redirect('/pos/index');
                 }
             }
             $error = 'Email hoặc mật khẩu không đúng.';

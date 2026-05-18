@@ -13,7 +13,21 @@
     <div class="stripe-card text-center stripe-login-card">
         <h1 class="display-4 mb-2" style="color:var(--color-danger)">403</h1>
         <p class="subtext mb-4">Bạn không có quyền truy cập trang này.</p>
-        <a href="<?= htmlspecialchars(BASE_URL . '/admin/dashboard') ?>" class="btn btn-primary">Về Dashboard</a>
+        <?php
+        $role = $_SESSION['role'] ?? '';
+        if (in_array($role, ['admin','manager'], true)) {
+            $homeUrl = BASE_URL . '/admin/dashboard';
+            $homeLabel = 'Về Dashboard';
+        } elseif ($role === 'staff') {
+            $homeUrl = BASE_URL . '/inventory/index';
+            $homeLabel = 'Về Tồn kho';
+        } else {
+            $homeUrl = BASE_URL . '/pos/index';
+            $homeLabel = 'Về Bán hàng';
+        }
+        ?>
+        <a href="<?= htmlspecialchars($homeUrl) ?>" class="btn btn-primary"><?= $homeLabel ?></a>
+
     </div>
 </body>
 </html>

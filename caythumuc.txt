@@ -1,0 +1,54 @@
+retail-chain-system/
+├── .git/                   # Thư mục ẩn của Git (Tự động sinh khi chạy git init)
+├── .gitignore              # Khai báo các file không push lên Git (quan trọng)
+├── README.md               # File hướng dẫn setup DB và chạy project cho bạn của bạn
+├── database/               # Thư mục lưu trữ tài liệu CSDL
+│   └── retail_chain.sql    # File SQL bạn vừa cung cấp
+│
+├── public/                 # Document Root (Chỉ định Web Server chạy vào đây)
+│   ├── index.php           # Entry point của ứng dụng (Route mọi request qua đây)
+│   ├── css/                # Stylesheets (Giao diện)
+│   ├── js/                 # Javascript (Xử lý AJAX, tương tác DOM)
+│   └── images/             # Hình ảnh tĩnh / ảnh sản phẩm upload
+│
+├── config/                 # Cấu hình hệ thống (Không push cấu hình thật lên Git)
+│   ├── config.php          # Base URL, Timezone...
+│   └── database.php        # Thông tin kết nối PDO MySQL
+│
+├── core/                   # Các class nền tảng (Dùng chung cho cả project)
+│   ├── App.php             # Xử lý URL và Router
+│   ├── Controller.php      # Base Controller (Kế thừa để render view/model)
+│   ├── Database.php        # Class kết nối PDO CSDL
+│   └── Middleware.php      # Base check quyền (Auth)
+│
+└── app/                    # THƯ MỤC LÀM VIỆC CHÍNH CỦA 2 BẠN
+    ├── Middlewares/        # Lọc request dựa theo vai trò (Role-based)
+    │   ├── AuthMiddleware.php  # Check Session PHP (Module 1)
+    │   └── RoleMiddleware.php  # Check Admin / Manager / Staff
+    │
+    ├── Models/             # Tương tác trực tiếp với các bảng SQL
+    │   ├── User.php        # (Xử lý users, roles, branches)
+    │   ├── Product.php     # (Xử lý products, categories)
+    │   ├── Inventory.php   # (Xử lý inventory, stock_transfers)
+    │   ├── Supplier.php    # (Xử lý suppliers, purchase_orders)
+    │   └── Order.php       # (Xử lý orders, customers)
+    │
+    ├── Controllers/        # Tương ứng với 8 Module trong thiết kế
+    │   ├── AuthController.php      # [Module 1] - Đăng nhập, Session, Phân quyền
+    │   ├── AdminController.php     # [Module 2] - CRUD Chi nhánh, Nhân sự
+    │   ├── ProductController.php   # [Module 3] - Quản lý sản phẩm, danh mục
+    │   ├── InventoryController.php # [Module 4] - Xem tồn kho, cảnh báo
+    │   ├── TransferController.php  # [Module 5] - Chuyển kho đa chi nhánh
+    │   ├── PurchaseController.php  # [Module 6] - Nhập hàng NCC
+    │   ├── POSController.php       # [Module 7] - Màn hình bán hàng
+    │   └── CustomerController.php  # [Module 8] - Khách hàng, tích điểm
+    │
+    └── Views/              # File giao diện HTML/PHP
+        ├── layouts/        # Header, Footer, Sidebar dùng chung
+        ├── auth/           # Màn hình Login
+        ├── admin/          # Giao diện module 2
+        ├── products/       # Giao diện module 3
+        ├── inventory/      # Giao diện module 4 & 5
+        ├── purchases/      # Giao diện module 6
+        ├── pos/            # Giao diện bán hàng (module 7)
+        └── customers/      # Giao diện module 8

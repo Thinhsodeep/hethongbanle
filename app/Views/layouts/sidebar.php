@@ -46,6 +46,30 @@ $role = $_SESSION['role'] ?? '';
         <a href="<?= BASE_URL ?>/inventory/alerts" class="stripe-nav-item <?= $navActive('/inventory/alerts') ?>">
             <i class="bi bi-exclamation-triangle"></i> Cảnh báo
         </a>
+        <a href="<?= BASE_URL ?>/transfer/index" class="stripe-nav-item <?= $navActive('/transfer/') ?>">
+            <i class="bi bi-arrow-left-right"></i> Chuyển kho
+        </a>
+        <?php endif; ?>
+        <?php if (in_array($role, ['admin', 'manager'], true)): ?>
+        <p class="label-text px-3 mb-1 mt-3">Nhập hàng</p>
+        <a href="<?= BASE_URL ?>/purchase/index" class="stripe-nav-item <?= $navActive('/purchase/index') ?>">
+            <i class="bi bi-truck"></i> Đơn nhập hàng
+        </a>
+        <a href="<?= BASE_URL ?>/purchase/suppliers" class="stripe-nav-item <?= $navActive('/purchase/supplier') ?>">
+            <i class="bi bi-building-check"></i> Nhà cung cấp
+        </a>
+        <?php endif; ?>
+        <?php if (in_array($role, ['admin', 'manager', 'cashier'], true)): ?>
+        <p class="label-text px-3 mb-1 mt-3">Bán hàng</p>
+        <a href="<?= BASE_URL ?>/pos/index" class="stripe-nav-item <?= $navActive('/pos/index') ?>">
+            <i class="bi bi-cash-register"></i> Bán hàng (POS)
+        </a>
+        <a href="<?= BASE_URL ?>/pos/history" class="stripe-nav-item <?= $navActive('/pos/history') ?>">
+            <i class="bi bi-receipt"></i> Lịch sử đơn
+        </a>
+        <a href="<?= BASE_URL ?>/customer/index" class="stripe-nav-item <?= $navActive('/customer/') ?>">
+            <i class="bi bi-person-heart"></i> Khách hàng
+        </a>
         <?php endif; ?>
         <a href="<?= BASE_URL ?>/auth/logout" class="stripe-nav-item text-danger mt-auto">
             <i class="bi bi-box-arrow-left"></i> Đăng xuất
