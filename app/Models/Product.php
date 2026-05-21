@@ -222,6 +222,26 @@ class Product
         return $stmt->execute([$d['name'], $d['description'] ?? null]);
     }
 
+    public function createCategoryReturningId(array $d): int
+    {
+        $this->createCategory($d);
+        return (int) $this->db->lastInsertId();
+    }
+
+    public function findCategoryByName(string $name): array|false
+    {
+        $stmt = $this->db->prepare('SELECT * FROM categories WHERE name = ? LIMIT 1');
+        $stmt->execute([trim($name)]);
+        return $stmt->fetch();
+    }
+
+    public function skuExists(string $sku): bool
+    {
+        $stmt = $this->db->prepare('SELECT 1 FROM product_variants WHERE sku = ? LIMIT 1');
+        $stmt->execute([trim($sku)]);
+        return (bool) $stmt->fetchColumn();
+    }
+
     public function findCategoryById(int $id): array|false
     {
         $stmt = $this->db->prepare('SELECT * FROM categories WHERE category_id = ?');

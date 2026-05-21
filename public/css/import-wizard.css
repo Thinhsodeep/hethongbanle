@@ -1,0 +1,287 @@
+/* Import Excel wizard — scoped #import-app */
+#import-app.import-wizard-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding-bottom: 2rem;
+}
+
+#import-app .import-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-secondary);
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+}
+
+#import-app .import-back-link:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+#import-app .import-wizard-top {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+#import-app .import-wizard-top .h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.35rem;
+}
+
+#import-app .import-stepper {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: nowrap;
+  margin-bottom: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+#import-app .import-stepper-item {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.5rem;
+  color: var(--color-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+#import-app .import-stepper-item.is-active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+#import-app .import-stepper-num {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  line-height: 1;
+}
+
+#import-app .import-stepper-item.is-active .import-stepper-num {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+}
+
+#import-app .import-stepper-item.is-done .import-stepper-num {
+  border-color: var(--color-success);
+  background: var(--color-success);
+  color: #fff;
+}
+
+#import-app .import-stepper-line {
+  display: block;
+  width: 72px;
+  min-width: 48px;
+  height: 2px;
+  background: var(--color-border);
+  margin: 0 1rem;
+  flex-shrink: 0;
+}
+
+#import-app .import-wizard-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+#import-app .import-upload-area {
+  padding: 1.5rem;
+}
+
+#import-app .import-dropzone {
+  padding: 2.25rem 1.25rem;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-neutral);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+#import-app .import-dropzone:hover,
+#import-app .import-dropzone.is-dragover {
+  border-color: var(--color-accent);
+  background: rgba(99, 91, 255, 0.05);
+}
+
+#import-app .import-dropzone-icon {
+  font-size: 2.25rem;
+  color: var(--color-secondary);
+  opacity: 0.5;
+  margin-bottom: 0.65rem;
+  display: block;
+}
+
+#import-app .import-dropzone-title {
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+#import-app .import-file-preview {
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--color-neutral);
+}
+
+#import-app .import-file-preview-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: rgba(99, 91, 255, 0.12);
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+#import-app .import-file-preview-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+#import-app .import-file-preview-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+#import-app .import-file-preview-name {
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#import-app .import-wizard-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+#import-app .import-field-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-bottom: 0.5rem;
+}
+
+#import-app .import-notice {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem 1.125rem;
+  border-radius: var(--radius-md);
+  background: rgba(99, 91, 255, 0.06);
+  border: 1px solid rgba(99, 91, 255, 0.12);
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-secondary);
+}
+
+#import-app .import-notice > i {
+  color: var(--color-accent);
+  font-size: 1.125rem;
+  margin-top: 0.15rem;
+}
+
+#import-app .import-wizard-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+}
+
+#import-app .import-wizard-footer-status {
+  font-size: 0.875rem;
+  color: var(--color-secondary);
+}
+
+#import-app .import-wizard-footer-status.is-ready {
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+#import-app #btn-analyze:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: #fff !important;
+}
+
+#import-app #btn-commit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#import-app .import-step-banner {
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  margin: 0;
+}
+
+#import-app .import-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 576px) {
+  #import-app .import-wizard-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #import-app .import-footer-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #import-app .import-footer-actions .btn {
+    width: 100%;
+  }
+
+  #import-app .import-stepper-line {
+    width: 32px;
+    margin: 0 0.5rem;
+  }
+}

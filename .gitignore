@@ -22,6 +22,9 @@ UI_STYLE.md
 .DS_Store
 Thumbs.db
 
+# Import AI debug (bật IMPORT_DEBUG=true)
+debug_import_*.txt
+
 # Logs & cache
 *.log
 /storage/

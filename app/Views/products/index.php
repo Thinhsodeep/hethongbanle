@@ -5,6 +5,7 @@
     </div>
     <div class="stripe-page-header-actions">
         <a href="<?= BASE_URL ?>/product/categories" class="btn btn-ghost">Danh mục</a>
+        <a href="<?= BASE_URL ?>/productImport/index" class="btn btn-outline-primary"><i class="bi bi-file-earmark-spreadsheet me-1"></i> Import Excel (AI)</a>
         <a href="<?= BASE_URL ?>/product/create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Thêm sản phẩm</a>
     </div>
 </div>
