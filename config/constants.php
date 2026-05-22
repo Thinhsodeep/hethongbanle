@@ -36,3 +36,30 @@ if (!defined('IMPORT_DEBUG')) {
         FILTER_VALIDATE_BOOLEAN
     ));
 }
+
+/** Cấu hình ngân hàng cho thanh toán VietQR */
+if (!defined('BANK_ID')) {
+    define('BANK_ID', $_ENV['BANK_ID'] ?? getenv('BANK_ID') ?: 'MB');
+}
+
+if (!defined('BANK_ACCOUNT_NO')) {
+    define('BANK_ACCOUNT_NO', $_ENV['BANK_ACCOUNT_NO'] ?? getenv('BANK_ACCOUNT_NO') ?: '0901111001');
+}
+
+if (!defined('BANK_ACCOUNT_NAME')) {
+    define('BANK_ACCOUNT_NAME', $_ENV['BANK_ACCOUNT_NAME'] ?? getenv('BANK_ACCOUNT_NAME') ?: 'NGUYEN VAN ADMIN');
+}
+
+if (!defined('PAYOS_CLIENT_ID')) {
+    define('PAYOS_CLIENT_ID', $_ENV['PAYOS_CLIENT_ID'] ?? getenv('PAYOS_CLIENT_ID') ?: '');
+}
+
+if (!defined('PAYOS_API_KEY')) {
+    define('PAYOS_API_KEY', $_ENV['PAYOS_API_KEY'] ?? getenv('PAYOS_API_KEY') ?: '');
+}
+
+if (!defined('PAYOS_CHECKSUM_KEY')) {
+    define('PAYOS_CHECKSUM_KEY', $_ENV['PAYOS_CHECKSUM_KEY'] ?? getenv('PAYOS_CHECKSUM_KEY') ?: '');
+}
+
+

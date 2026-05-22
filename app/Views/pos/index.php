@@ -93,26 +93,94 @@
         <div class="label-text mb-2">Hinh thuc thanh toan</div>
         <div class="d-flex gap-2">
             <label class="d-flex align-items-center gap-1 px-2 py-1 rounded border" style="cursor:pointer;flex:1;justify-content:center">
-                <input type="radio" name="payMethod" value="cash" checked> Tien mat
+                <input type="radio" name="payMethod" value="cash" checked> Tiền mặt
             </label>
             <label class="d-flex align-items-center gap-1 px-2 py-1 rounded border" style="cursor:pointer;flex:1;justify-content:center">
-                <input type="radio" name="payMethod" value="card"> The
+                <input type="radio" name="payMethod" value="card"> Quẹt thẻ
             </label>
             <label class="d-flex align-items-center gap-1 px-2 py-1 rounded border" style="cursor:pointer;flex:1;justify-content:center">
-                <input type="radio" name="payMethod" value="transfer"> CK
+                <input type="radio" name="payMethod" value="transfer"> VietQR (Online)
             </label>
         </div>
     </div>
 
     <div class="p-3">
         <button class="btn btn-primary w-100 py-2" id="checkoutBtn" disabled style="font-size:1rem">
-            <i class="bi bi-check-circle me-2"></i>Thanh toan
+            <i class="bi bi-check-circle me-2"></i>Thanh toán
         </button>
         <a href="<?= BASE_URL ?>/pos/history" class="btn btn-ghost btn-sm w-100 mt-2">
-            <i class="bi bi-clock-history me-1"></i>Lich su don
+            <i class="bi bi-clock-history me-1"></i>Lịch sử đơn
         </a>
     </div>
 </div>
+</div>
+
+<!-- VietQR Payment Modal -->
+<div class="modal fade" id="vietqrModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content stripe-card p-0" style="border-radius:var(--radius-lg); overflow:hidden">
+            <div class="modal-header border-bottom px-4 py-3" style="background:var(--color-primary); color:white">
+                <h5 class="modal-title d-flex align-items-center"><i class="bi bi-qr-code-scan me-2 text-info"></i> Thanh toán Online qua VietQR</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" id="closeVietQRBtn"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <p class="subtext mb-1">Tổng tiền cần thanh toán</p>
+                    <h2 class="text-primary fw-700" id="qrAmountDisplay" style="font-size:1.8rem; margin:0">0đ</h2>
+                </div>
+                
+                <div class="row g-3">
+                    <div class="col-md-6 text-center d-flex flex-column align-items-center justify-content-center">
+                        <div class="position-relative p-2 border rounded" style="background:#fff">
+                            <img id="vietqrImage" src="" alt="Mã VietQR" style="width:180px; height:180px; object-fit:contain">
+                            <div id="qrExpiredOverlay" class="position-absolute top-0 start-0 w-100 h-100 d-none flex-column align-items-center justify-content-center bg-white bg-opacity-95">
+                                <i class="bi bi-exclamation-circle text-danger" style="font-size:2.5rem"></i>
+                                <span class="fw-500 text-danger mt-1">Mã đã hết hạn</span>
+                                <button class="btn btn-sm btn-outline-primary mt-2" id="btnRegenQR">Tạo lại mã</button>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-muted" style="font-size:0.75rem">
+                            Quét bằng ứng dụng Ngân hàng hoặc Ví điện tử (MoMo, ZaloPay, ...)
+                        </div>
+                        <div id="payLinkContainer" style="display:none" class="w-100 mt-2"></div>
+                    </div>
+                    <div class="col-md-6 d-flex flex-column justify-content-between">
+                        <div class="p-3 rounded" style="background:var(--color-neutral); font-size:0.85rem">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Ngân hàng:</span>
+                                <strong class="text-end" id="qrBankDisplay">MB</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Số tài khoản:</span>
+                                <strong class="text-end" id="qrAccDisplay">0901111001</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Chủ tài khoản:</span>
+                                <strong class="text-end" id="qrNameDisplay">NGUYEN VAN ADMIN</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Nội dung CK:</span>
+                                <strong class="text-end text-danger" id="qrNoteDisplay">HDBL123</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="my-3 text-center">
+                            <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+                                <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+                                <span class="fw-500 text-secondary" id="qrStatusText">Đang chờ khách thanh toán...</span>
+                            </div>
+                            <span class="subtext text-muted" style="font-size:0.8rem">Hiệu lực: <strong id="qrTimer">05:00</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top p-3 d-flex gap-2">
+                <button class="btn btn-ghost flex-grow-1" id="btnCancelQR">Hủy giao dịch</button>
+                <button class="btn btn-secondary" id="btnSimulateSuccess"><i class="bi bi-patch-check me-1"></i> Giả lập thành công</button>
+                <button class="btn btn-primary flex-grow-1" id="btnVerifyQR"><i class="bi bi-check-circle me-1 text-white"></i> Xác nhận đã nhận tiền</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Success Modal -->
@@ -121,14 +189,14 @@
         <div class="modal-content stripe-card p-0" style="border-radius:var(--radius-lg)">
             <div class="modal-body p-4 text-center">
                 <div style="font-size:3rem">&#10003;</div>
-                <h3 class="h3 mt-2">Thanh toan thanh cong!</h3>
-                <p class="subtext mb-3">Don hang <strong id="successOrderId"></strong> da duoc tao.</p>
+                <h3 class="h3 mt-2">Thanh toán thành công!</h3>
+                <p class="subtext mb-3">Đơn hàng <strong id="successOrderId"></strong> đã được tạo.</p>
                 <p class="subtext mb-4" id="loyaltyMsg" style="display:none"></p>
                 <div class="d-flex gap-2 justify-content-center">
                     <a id="receiptLink" href="#" class="btn btn-outline-primary" target="_blank">
-                        <i class="bi bi-printer me-1"></i>In hoa don
+                        <i class="bi bi-printer me-1"></i>In hóa đơn
                     </a>
-                    <button class="btn btn-primary" id="newOrderBtn">Don moi</button>
+                    <button class="btn btn-primary" id="newOrderBtn">Đơn mới</button>
                 </div>
             </div>
         </div>
@@ -141,7 +209,13 @@ window.POS_CONFIG = {
     searchUrl:       '<?= BASE_URL ?>/pos/search',
     findCustomerUrl: '<?= BASE_URL ?>/pos/findCustomer',
     storeUrl:        '<?= BASE_URL ?>/pos/store',
+    cancelOrderUrl:  '<?= BASE_URL ?>/pos/cancelOrder',
+    checkPaymentUrl: '<?= BASE_URL ?>/pos/checkPayment',
     receiptBase:     '<?= BASE_URL ?>/pos/receipt/',
+    bankId:          '<?= BANK_ID ?>',
+    bankAccountNo:   '<?= BANK_ACCOUNT_NO ?>',
+    bankAccountName: '<?= BANK_ACCOUNT_NAME ?>',
 };
 </script>
 <script src="<?= BASE_URL ?>/js/pos.js?v=<?= time() ?>"></script>
+

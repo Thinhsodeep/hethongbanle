@@ -22,9 +22,17 @@ $flashStripeClass = match ($flash['type'] ?? '') {
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.css?v=<?= (int) (@filemtime(APP_ROOT . '/public/css/style.css') ?: 1) ?>">
 </head>
 <body>
-<div class="d-flex" style="min-height:100vh">
+<div class="d-flex app-layout" style="min-height:100vh">
 <?php require_once __DIR__ . '/sidebar.php'; ?>
+<div class="stripe-sidebar-overlay" id="sidebarOverlay"></div>
 <main class="stripe-main">
+    <div class="mobile-header">
+        <button class="btn btn-ghost p-1" id="btnToggleSidebar" style="font-size:1.5rem" aria-label="Mở menu">
+            <i class="bi bi-list"></i>
+        </button>
+        <span class="fw-600" style="color:var(--color-primary);font-weight:600">Retail Chain</span>
+        <div style="width:32px"></div>
+    </div>
 <?php if ($flash): ?>
     <div class="stripe-alert <?= htmlspecialchars($flashStripeClass) ?> alert-dismissible fade show" role="alert">
         <?= htmlspecialchars($flash['message']) ?>

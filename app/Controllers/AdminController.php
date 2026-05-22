@@ -142,4 +142,74 @@ class AdminController extends Controller
         $this->flash('success', 'Cập nhật nhân viên thành công.');
         $this->redirect('/admin/users');
     }
+
+    public function updatePaymentSettings(): void
+    {
+        RoleMiddleware::require('admin');
+
+        $bankId = trim($_POST['bank_id'] ?? 'MB');
+        $bankAccount = trim($_POST['bank_account_no'] ?? '');
+        $bankName = trim($_POST['bank_account_name'] ?? '');
+        $payosClientId = trim($_POST['payos_client_id'] ?? '');
+        $payosApiKey = trim($_POST['payos_api_key'] ?? '');
+        $payosChecksumKey = trim($_POST['payos_checksum_key'] ?? '');
+
+        $envPath = ROOT_PATH . '/.env';
+        if (is_file($envPath) && is_writable($envPath)) {
+            $content = file_get_contents($envPath);
+
+            // Replace BANK_ID
+            if (preg_match('/^BANK_ID=.*$/m', $content)) {
+                $content = preg_replace('/^BANK_ID=.*$/m', 'BANK_ID=' . $bankId, $content);
+            } else {
+                $content .= "\nBANK_ID=" . $bankId;
+            }
+
+            // Replace BANK_ACCOUNT_NO
+            if (preg_match('/^BANK_ACCOUNT_NO=.*$/m', $content)) {
+                $content = preg_replace('/^BANK_ACCOUNT_NO=.*$/m', 'BANK_ACCOUNT_NO=' . $bankAccount, $content);
+            } else {
+                $content .= "\nBANK_ACCOUNT_NO=" . $bankAccount;
+            }
+
+            // Replace BANK_ACCOUNT_NAME
+            if (preg_match('/^BANK_ACCOUNT_NAME=.*$/m', $content)) {
+                $content = preg_replace('/^BANK_ACCOUNT_NAME=.*$/m', 'BANK_ACCOUNT_NAME=' . $bankName, $content);
+            } else {
+                $content .= "\nBANK_ACCOUNT_NAME=" . $bankName;
+            }
+
+            // Replace PAYOS_CLIENT_ID
+            if (preg_match('/^PAYOS_CLIENT_ID=.*$/m', $content)) {
+                $content = preg_replace('/^PAYOS_CLIENT_ID=.*$/m', 'PAYOS_CLIENT_ID=' . $payosClientId, $content);
+            } else {
+                $content .= "\nPAYOS_CLIENT_ID=" . $payosClientId;
+            }
+
+            // Replace PAYOS_API_KEY
+            if (preg_match('/^PAYOS_API_KEY=.*$/m', $content)) {
+                $content = preg_replace('/^PAYOS_API_KEY=.*$/m', 'PAYOS_API_KEY=' . $payosApiKey, $content);
+            } else {
+                $content .= "\nPAYOS_API_KEY=" . $payosApiKey;
+            }
+
+            // Replace PAYOS_CHECKSUM_KEY
+            if (preg_match('/^PAYOS_CHECKSUM_KEY=.*$/m', $content)) {
+                $content = preg_replace('/^PAYOS_CHECKSUM_KEY=.*$/m', 'PAYOS_CHECKSUM_KEY=' . $payosChecksumKey, $content);
+            } else {
+                $content .= "\nPAYOS_CHECKSUM_KEY=" . $payosChecksumKey;
+            }
+
+            // Clean up old CASSO_API_KEY if exists
+            $content = preg_replace('/^CASSO_API_KEY=.*$\n?/m', '', $content);
+
+            file_put_contents($envPath, trim($content) . "\n");
+            $this->flash('success', 'Cập nhật cấu hình thanh toán online thành công.');
+        } else {
+            $this->flash('danger', 'Không thể ghi file .env. Vui lòng kiểm tra quyền ghi file.');
+        }
+
+        $this->redirect('/admin/dashboard');
+    }
 }
+

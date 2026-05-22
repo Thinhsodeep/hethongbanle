@@ -449,4 +449,225 @@ body, .body {
   max-width: 420px;
 }
 
+/* ─── Responsive Styles ────────────────────────────────────────────── */
+
+/* Overlay element for mobile sidebar backdrop */
+.stripe-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 37, 64, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 1040;
+}
+.stripe-sidebar-overlay.show {
+  display: block;
+}
+
+/* Mobile top bar - hidden on desktop */
+.mobile-header {
+  display: none;
+}
+
+/* Responsive table wrapper */
+.table-responsive-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── ≤992px: Tablet and Mobile ── */
+@media (max-width: 992px) {
+  /* Root layout */
+  .app-layout {
+    flex-direction: column !important;
+  }
+
+  /* Sidebar becomes off-canvas drawer */
+  .stripe-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    z-index: 1050;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(10, 37, 64, 0.18);
+  }
+  .stripe-sidebar.show {
+    transform: translateX(0);
+  }
+  .stripe-sidebar-overlay.show {
+    display: block;
+  }
+
+  /* Mobile top bar */
+  .mobile-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Main content area */
+  .stripe-main {
+    padding: 1rem 1rem;
+    width: 100%;
+  }
+
+  /* Page header stacks title and actions */
+  .stripe-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+  }
+  .stripe-page-header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .stripe-page-header-actions .btn {
+    flex: 1 1 auto;
+    text-align: center;
+    font-size: 0.85rem;
+    padding: 0.45rem 0.75rem;
+  }
+
+  /* Tables: wrap and reduce padding */
+  .stripe-table thead th,
+  .stripe-table tbody td {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.85rem;
+  }
+  .stripe-card > .table,
+  .stripe-card > table {
+    min-width: 560px;
+  }
+  .stripe-card.p-0 {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Cards */
+  .stripe-card {
+    padding: 1rem;
+  }
+
+  /* ─ POS Screen ─ */
+  .pos-layout {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+  .pos-right {
+    position: static !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+  .pos-cart {
+    max-height: 360px;
+    overflow-y: auto;
+  }
+
+  /* ─ Filter bars ─ */
+  .d-flex.gap-2.flex-wrap form,
+  form.d-flex.gap-2.flex-wrap {
+    width: 100%;
+  }
+  form.d-flex.gap-2.flex-wrap input,
+  form.d-flex.gap-2.flex-wrap select {
+    width: 100% !important;
+    flex: 1 1 auto;
+  }
+
+  /* ─ Stat cards on dashboard ─ */
+  .row.g-3 .col-sm-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  /* h1 size reduction */
+  h1, .h1 {
+    font-size: 1.6rem;
+  }
+  h2, .h2 {
+    font-size: 1.25rem;
+  }
+  h3, .h3 {
+    font-size: 1.1rem;
+  }
+}
+
+/* ── ≤576px: Small phones ── */
+@media (max-width: 576px) {
+  .stripe-main {
+    padding: 0.75rem 0.75rem;
+  }
+
+  /* Stat cards go full width on very small screens */
+  .row.g-3 .col-sm-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  /* Page header actions go full width */
+  .stripe-page-header-actions .btn {
+    font-size: 0.8rem;
+  }
+
+  /* stripe-card inner padding */
+  .stripe-card {
+    padding: 0.875rem;
+  }
+
+  /* Login card full width */
+  .stripe-login-card {
+    max-width: 100%;
+  }
+
+  /* POS: smaller product grid */
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+  }
+
+  /* Modal inner adjustments */
+  .modal-body {
+    padding: 1rem !important;
+  }
+  .modal-footer {
+    padding: 0.75rem 1rem !important;
+    flex-wrap: wrap;
+  }
+  .modal-footer .btn {
+    flex: 1 1 auto;
+  }
+
+  /* VietQR modal stacks columns */
+  .modal .row.g-3 .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  h1, .h1 {
+    font-size: 1.4rem;
+  }
+}
+
+/* ── Desktop: always show sidebar, hide mobile elements ── */
+@media (min-width: 993px) {
+  .mobile-header {
+    display: none !important;
+  }
+  .stripe-sidebar-overlay {
+    display: none !important;
+  }
+}
+
 /* Import wizard: see public/css/import-wizard.css */
+

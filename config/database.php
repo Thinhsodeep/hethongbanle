@@ -6,7 +6,7 @@ $dbConfig = [
     'host' => '127.0.0.1',
     'name' => 'retail_chain',
     'user' => 'root',
-    'pass' => '0918447847',
+    'pass' => '',
 ];
 
 if (is_file(__DIR__ . '/database.local.php')) {

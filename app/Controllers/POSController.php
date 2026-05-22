@@ -142,7 +142,81 @@ final class POSController extends Controller
                 }
             }
 
-            echo json_encode(['ok' => true, 'order_id' => $orderId]);
+            $payosData = null;
+
+            if ($payMethod === 'transfer') {
+                $payosClientId = defined('PAYOS_CLIENT_ID') ? PAYOS_CLIENT_ID : '';
+                $payosApiKey = defined('PAYOS_API_KEY') ? PAYOS_API_KEY : '';
+                $payosChecksumKey = defined('PAYOS_CHECKSUM_KEY') ? PAYOS_CHECKSUM_KEY : '';
+
+                if (!empty($payosClientId) && !empty($payosApiKey) && !empty($payosChecksumKey)) {
+                    $orderData = $order->findById($orderId);
+                    $finalAmount = (int) $orderData['final_amount'];
+
+                    // PayOS Payload
+                    $payosPayload = [
+                        'orderCode'   => $orderId,
+                        'amount'      => $finalAmount,
+                        'description' => 'HDBL' . $orderId,
+                        'cancelUrl'   => BASE_URL . '/pos/index',
+                        'returnUrl'   => BASE_URL . '/pos/index',
+                    ];
+
+                    // Sort alphabetical by key
+                    ksort($payosPayload);
+
+                    // Generate signature query string (raw unencoded values)
+                    $queryString = "";
+                    $count = 0;
+                    foreach ($payosPayload as $key => $value) {
+                        if ($count > 0) {
+                            $queryString .= "&";
+                        }
+                        $queryString .= $key . "=" . $value;
+                        $count++;
+                    }
+
+                    $signature   = hash_hmac('sha256', $queryString, $payosChecksumKey);
+                    $payosPayload['signature'] = $signature;
+
+                    // Make request to PayOS
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, 'https://api-merchant.payos.vn/v2/payment-requests');
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                        'x-client-id: ' . $payosClientId,
+                        'x-api-key: ' . $payosApiKey,
+                        'Content-Type: application/json',
+                    ]);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payosPayload));
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+                    $response = curl_exec($ch);
+                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    $curlError = curl_error($ch);
+                    curl_close($ch);
+
+                    file_put_contents(ROOT_PATH . '/payos_debug.log', date('Y-m-d H:i:s') . " - store (Order: $orderId):\nHTTP Code: $httpCode\nPayload: " . json_encode($payosPayload) . "\nResponse: $response\ncURL Error: $curlError\n\n", FILE_APPEND);
+
+                    if ($httpCode === 200) {
+                        $resData = json_decode($response, true);
+                        if (($resData['error'] ?? 0) === 0 && isset($resData['data'])) {
+                            $payosData = [
+                                'checkoutUrl'   => $resData['data']['checkoutUrl'],
+                                'qrCode'        => $resData['data']['qrCode'] ?? '',
+                                'paymentLinkId' => $resData['data']['paymentLinkId'] ?? '',
+                            ];
+                        }
+                    }
+                }
+            }
+
+            echo json_encode([
+                'ok'       => true,
+                'order_id' => $orderId,
+                'payos'    => $payosData,
+            ]);
         } catch (\Throwable $e) {
             echo json_encode(['ok' => false, 'message' => 'Lỗi hệ thống: ' . $e->getMessage()]);
         }
@@ -177,4 +251,114 @@ final class POSController extends Controller
         require_once APP_ROOT . '/app/Views/pos/receipt.php';
         exit;
     }
+
+    /**
+     * POST: Hủy đơn hàng đang thanh toán dở dang.
+     * Body JSON: { order_id }
+     */
+    public function cancelOrder(): void
+    {
+        RoleMiddleware::require('admin', 'manager', 'cashier');
+        header('Content-Type: application/json');
+
+        $body = json_decode(file_get_contents('php://input'), true) ?? [];
+        $orderId = (int) ($body['order_id'] ?? 0);
+        $branchId = (int) $_SESSION['branch_id'];
+
+        if ($orderId <= 0) {
+            echo json_encode(['ok' => false, 'message' => 'Mã đơn hàng không hợp lệ.']);
+            exit;
+        }
+
+        $orderModel = new Order();
+        $order = $orderModel->findById($orderId);
+        if (!$order) {
+            echo json_encode(['ok' => false, 'message' => 'Không tìm thấy đơn hàng.']);
+            exit;
+        }
+
+        $items = $orderModel->getItems($orderId);
+        $ok = $orderModel->cancel($orderId, $branchId, $items);
+
+        echo json_encode(['ok' => $ok]);
+        exit;
+    }
+
+    /**
+     * POST: Kiểm tra giao dịch thực tế qua API PayOS.
+     * Body JSON: { order_id, amount }
+     */
+    public function checkPayment(): void
+    {
+        RoleMiddleware::require('admin', 'manager', 'cashier');
+        header('Content-Type: application/json');
+
+        $body = json_decode(file_get_contents('php://input'), true) ?? [];
+        $orderId = (int) ($body['order_id'] ?? 0);
+        $amount = (float) ($body['amount'] ?? 0);
+
+        if ($orderId <= 0) {
+            echo json_encode(['ok' => false, 'message' => 'Mã đơn hàng không hợp lệ.']);
+            exit;
+        }
+
+        $payosClientId = defined('PAYOS_CLIENT_ID') ? PAYOS_CLIENT_ID : '';
+        $payosApiKey = defined('PAYOS_API_KEY') ? PAYOS_API_KEY : '';
+
+        if (empty($payosClientId) || empty($payosApiKey)) {
+            // Không cấu hình key thực tế, trả về false để JS xử lý giả lập hoặc chờ click tay
+            echo json_encode([
+                'ok' => true,
+                'paid' => false,
+                'message' => 'PayOS chưa được cấu hình. Sử dụng chế độ xác nhận tay hoặc giả lập.'
+            ]);
+            exit;
+        }
+
+        // Gọi API PayOS để lấy thông tin đơn hàng
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://api-merchant.payos.vn/v2/payment-requests/' . $orderId);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'x-client-id: ' . $payosClientId,
+            'x-api-key: ' . $payosApiKey,
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        file_put_contents(ROOT_PATH . '/payos_debug.log', date('Y-m-d H:i:s') . " - checkPayment (Order: $orderId, Amount: $amount):\nHTTP Code: $httpCode\nResponse: $response\ncURL Error: $curlError\n\n", FILE_APPEND);
+
+        if ($httpCode !== 200) {
+            echo json_encode([
+                'ok' => true,
+                'paid' => false,
+                'message' => 'Lỗi kết nối PayOS API hoặc đơn hàng chưa thanh toán.'
+            ]);
+            exit;
+        }
+
+        $data = json_decode($response, true);
+        if (($data['error'] ?? 0) === 0 && isset($data['data'])) {
+            $status = $data['data']['status'] ?? '';
+            $paid = ($status === 'PAID');
+            echo json_encode([
+                'ok' => true,
+                'paid' => $paid,
+                'status' => $status
+            ]);
+            exit;
+        }
+
+        echo json_encode([
+            'ok' => true,
+            'paid' => false
+        ]);
+        exit;
+    }
 }
+
